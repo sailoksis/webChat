@@ -1,3 +1,4 @@
+import './config.js';
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
@@ -6,8 +7,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import { connectDB } from './config/db.js';
 
-dotenv.config();
-
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 const app = express();
 const server = http.createServer(app);
 
