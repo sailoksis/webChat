@@ -4,11 +4,13 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import { connectDB } from './config/db.js';
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
     origin: '*',
@@ -39,4 +41,9 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(PORT, () => console.log(`🚀 Сервер работает на порту ${PORT}`));
+const start = async () => {
+  await connectDB(); // <-- вот это важно!
+  server.listen(PORT, () => console.log(`🚀 Сервер работает на порту ${PORT}`));
+};
+
+start();
