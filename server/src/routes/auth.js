@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js'; // импорт модели
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET;
@@ -42,5 +43,11 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
-
+router.get('/profile', authMiddleware, async (req, res) => {
+  try {
+    res.json({ user: req.user }); // req.user добавлен в middleware
+  } catch (err) {
+    res.status(500).json({ message: 'Ошибка получения профиля' });
+  }
+});
 export default router;
