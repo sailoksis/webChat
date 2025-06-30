@@ -6,6 +6,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import { connectDB } from './config/db.js';
+import roomRoutes from './routes/rooms.js';
+import messageRoutes from './routes/messages.js';
 
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
 const app = express();
@@ -21,6 +23,8 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/rooms', roomRoutes);
+app.use('/api/messages', messageRoutes);
 
 const PORT = process.env.PORT || 5000;
 
