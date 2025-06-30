@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.js';
 import { connectDB } from './config/db.js';
 import roomRoutes from './routes/rooms.js';
 import messageRoutes from './routes/messages.js';
+import Message from './models/Message.js';
 
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
 const app = express();
@@ -36,8 +37,18 @@ io.on('connection', (socket) => {
     console.log(`Пользователь ${socket.id} вошел в комнату ${room}`);
   });
 
-  socket.on('send_message', (data) => {
-    io.to(data.room).emit('receive_message', data);
+  socket.on('send_message', async (data) => {
+    const { room, user, text } = data;
+
+    try {
+      // Сохраняем сообщение в MongoDB
+      const newMessage = await Message.create({ room, user, text });
+
+      // Отправляем всем в комнате сохранённое сообщение
+      io.to(room).emit('receive_message', newMessage);
+    } catch (err) {
+      console.error('Ошибка при отправке сообщения:', err);
+    }
   });
 
   socket.on('disconnect', () => {
